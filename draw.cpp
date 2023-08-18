@@ -40,7 +40,7 @@ void draw_grid(const float window_width, const float window_height)
     
 }
 
-void draw_board(const Board &board, const float window_width, const float window_height)
+void draw_board(const SudokuBoard &board, const float window_width, const float window_height)
 {
     draw_grid(window_width, window_height);
 }
