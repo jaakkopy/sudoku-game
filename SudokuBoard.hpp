@@ -10,7 +10,7 @@ public:
     void initialize_board(int clues);
     int get(int r, int c) const; 
     void set(int r, int c, int num);
-    void solve_game();
+    bool solve_game(int i);
     bool verify_solution() const;
 private:
     std::vector<int> nums;

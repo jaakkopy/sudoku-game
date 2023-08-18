@@ -10,6 +10,7 @@ int main(void)
     float screen_h = 800.0f;
     
     SudokuBoard board;
+    board.initialize_board(17);
 
     InitWindow(screen_w, screen_h, "sudoku");
     SetTargetFPS(60);

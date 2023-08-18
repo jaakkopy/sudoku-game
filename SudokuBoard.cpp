@@ -7,20 +7,20 @@
 
 SudokuBoard::SudokuBoard()
 {
-    nums = std::vector<int>(81, 0);
+    nums = std::vector<int>(82, 0);
 }
 
 void SudokuBoard::initialize_board(int clues)
 {
     std::fill(nums.begin(), nums.end(), 0);
-    // Fill out the first row with randomly ordered numbers from 1 to 9. Without random clues the solving algorithm would always create the same solution
+    // Fill out the first row with randomly ordered numbers from 1 to 9 to randomize the outcome of the solving algorithm
     std::vector<int> first_row = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::random_shuffle(first_row.begin(), first_row.end());
     for (int i = 0; i < 9; ++i)
     {
         this->set(0, i, first_row.at(i));
     }
-    solve_game();
+    solve_game(0);
     srand(time(NULL));
     int remove_amout = 81 - clues;
     remove_amout = remove_amout > 0 ? remove_amout : 0;
@@ -30,7 +30,7 @@ void SudokuBoard::initialize_board(int clues)
         int random_r = random() % 9;
         int random_c = random() % 9;
         std::tuple<int, int> random_slot = {random_r, random_c};
-        if (already_removed.find(random_slot) != already_removed.end())
+        if (already_removed.find(random_slot) == already_removed.end())
         {
             this->set(random_r, random_c, 0);
             already_removed.insert(random_slot);
@@ -49,8 +49,36 @@ void SudokuBoard::set(int r, int c, int num)
     this->nums.at(r * 9 + c) = num;
 }
 
-void SudokuBoard::solve_game()
+bool SudokuBoard::solve_game(int i)
 {
+    // bitmap for the numbers 1-9
+    unsigned all_found = 0b1111111110; 
+    while (nums.at(i)) 
+        i++;
+    if (i == 81)
+        return true;
+    int col_first = i % 9;
+    int row_first = i - col_first;
+    int block_first = ( (i/3) % 3 ) * 3 + (i/27) * 27;
+    // check off the numbers found in the row, column, and block
+    for (int j = 0; j < 9; ++j)
+    {
+        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at(col_first + j * 9)) | (1u << nums.at(block_first + 9 * (j/3))));
+    }
+    for (int j = 1; j <= 9; j++)
+    {
+        // if number j is not used, try to place it here
+        if (all_found & (1u << j))
+        {
+            nums.at(i) = j; 
+            if(solve_game(i+1))
+                // reached the end with this combination; return true
+                return true;  
+        }
+    }
+    // All of the numbers were used or none of the combinations led to success. Mark the spot as 0 and backtrack
+    nums.at(i) = 0;
+    return false; 
 }
 
 bool SudokuBoard::verify_solution() const

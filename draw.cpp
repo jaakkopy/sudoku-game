@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <string>
 #include "draw.hpp"
 
 void draw_grid(const float window_width, const float window_height)
@@ -43,4 +44,16 @@ void draw_grid(const float window_width, const float window_height)
 void draw_board(const SudokuBoard &board, const float window_width, const float window_height)
 {
     draw_grid(window_width, window_height);
+    int blocks_horizontal = window_width / 9;
+    int blocks_vertical = window_height / 9;
+    float font_size = blocks_vertical / blocks_horizontal;
+    for (int r = 0; r < 9; ++r)
+    {
+        for (int c = 0; c < 9; ++c)
+        {
+            int num = board.get(r, c);
+            if (num != 0)
+                DrawText(TextFormat("%i", num), blocks_horizontal * ((float)c + 0.5), blocks_vertical *((float)r + 0.5) , font_size, BLACK);
+        }
+    }
 }
