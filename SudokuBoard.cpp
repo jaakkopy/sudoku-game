@@ -39,7 +39,7 @@ void SudokuBoard::initialize_board(int clues)
     for (int i = 0; i < 81; ++i)
     {
         if (nums.at(i) != 0)
-            clue_positions.insert(std::tuple<int, int>(i/9, i%9));
+            clue_positions.insert(std::tuple<int, int>(i / 9, i % 9));
     }
 }
 
@@ -57,34 +57,34 @@ void SudokuBoard::set(int r, int c, int num)
 bool SudokuBoard::solve_game(int i)
 {
     // bitmap for the numbers 1-9
-    unsigned all_found = 0b1111111110; 
-    while (nums.at(i)) 
+    unsigned all_found = 0b1111111110;
+    while (nums.at(i))
         i++;
     if (i == 81)
         return true;
     int col = i % 9;
     int row_first = i - col;
-    int block_first = ( (i/3) % 3 ) * 3 + (i/27) * 27;
+    int block_first = ((i / 3) % 3) * 3 + (i / 27) * 27;
     // check off the numbers found in the row, column, and block
     for (int j = 0; j < 9; ++j)
     {
         //                     row                                 column                             block
-        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at( (i + j * 9) % 81)) | (1u << nums.at(block_first + (j % 3) + 9 * (j/3))));
+        all_found &= ~((1u << nums.at(row_first + j)) | (1u << nums.at((i + j * 9) % 81)) | (1u << nums.at(block_first + (j % 3) + 9 * (j / 3))));
     }
     for (int j = 1; j <= 9; j++)
     {
         // if number j is not used, try to place it here
         if (all_found & (1u << j))
         {
-            nums.at(i) = j; 
-            if(solve_game(i+1))
+            nums.at(i) = j;
+            if (solve_game(i + 1))
                 // reached the end with this combination; return true
-                return true;  
+                return true;
         }
     }
     // All of the numbers were used or none of the combinations led to success. Mark the spot as 0 and backtrack
     nums.at(i) = 0;
-    return false; 
+    return false;
 }
 
 bool SudokuBoard::verify_solution() const
