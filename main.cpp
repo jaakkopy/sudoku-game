@@ -7,11 +7,11 @@
 
 void resize(float &window_w, float &screen_h);
 void handle_number_input(SudokuBoard &board, Player &player, float window_w, float window_h);
-int handle_character_input(SudokuBoard &board, int input, float window_w, float window_h);
+int handle_character_input(SudokuBoard &board, int input);
 
 int main(void)
 {
-    float window_w = 700.0f;
+    float window_w = 800.0f;
     float window_h = 800.0f;
 
     SudokuBoard board;
@@ -34,7 +34,14 @@ int main(void)
         draw_board(board, window_w, window_h);
 
         int player_character_input = player.check_character_pressed();
-        int is_ok = handle_character_input(board, player_character_input, window_w, window_h);
+        int is_ok = handle_character_input(board, player_character_input);
+        if (is_ok != -1)
+        {
+            if (is_ok == 1)
+                DrawText("Correct!", window_w / 2 - 50 * window_h / window_w, window_h / 2, 50 * window_h / window_w, GREEN);
+            else
+                DrawText("Wrong", window_w / 2 - 50 * window_h / window_w, window_h / 2, 50 * window_h / window_w, RED);
+        }
 
         EndDrawing();
         if (is_ok != -1)
@@ -58,27 +65,21 @@ void handle_number_input(SudokuBoard &board, Player &player, float window_w, flo
         board.set(player.get_selected_row(), player.get_selected_col(), check_number);
 }
 
-int handle_character_input(SudokuBoard &board, int input, float window_w, float window_h)
+int handle_character_input(SudokuBoard &board, int input)
 {
     int is_ok = -1;
-    switch (input)
+    if (input == 's')
     {
-    case 's':
-        board.solve_game(0);
-        break;
-    case 'r':
+        board.solve_game();
+    }
+    if (input == 'r')
+    {
         board.initialize_board(AMOUNT_CLUES);
-        break;
-    case 'v':
-        is_ok = board.verify_solution();
-        break;
     }
-    if (is_ok != -1)
+    if (input == 'v')
     {
-        if (is_ok == 1)
-            DrawText("Correct!", window_w / 2 - 50 * window_h / window_w, window_h / 2, 50 * window_h / window_w, GREEN);
-        else
-            DrawText("Wrong", window_w / 2 - 50 * window_h / window_w, window_h / 2, 50 * window_h / window_w, RED);
+        is_ok = board.verify_solution();
     }
+    
     return is_ok;
 }

@@ -19,7 +19,7 @@ void SudokuBoard::initialize_board(int clues)
     {
         this->set(0, i, first_row.at(i));
     }
-    solve_game(0);
+    solve_game();
     srand(time(NULL));
     int remove_amout = 81 - clues;
     remove_amout = remove_amout > 0 ? remove_amout : 0;
@@ -54,7 +54,23 @@ void SudokuBoard::set(int r, int c, int num)
         this->nums.at(r * 9 + c) = num;
 }
 
-bool SudokuBoard::solve_game(int i)
+void SudokuBoard::solve_game()
+{
+    // First clear ever non-clue to make sure the game is solvable
+    for (int r = 0; r < 9; ++r) 
+    {
+        for (int c = 0; c < 9; ++c) 
+        {
+            if (!is_clue_square(r, c))
+            {
+                this->set(r, c, 0);
+            }
+        }
+    }
+    solve(0);
+}
+
+bool SudokuBoard::solve(int i)
 {
     // bitmap for the numbers 1-9
     unsigned all_found = 0b1111111110;
@@ -68,7 +84,7 @@ bool SudokuBoard::solve_game(int i)
     // check off the numbers found in the row, column, and block
     for (int j = 0; j < 9; ++j)
     {
-        //                     row                                 column                             block
+        // j:th element of the:      row,                                 column, and                      block
         all_found &= ~((1u << nums.at(row_first + j)) | (1u << nums.at((i + j * 9) % 81)) | (1u << nums.at(block_first + (j % 3) + 9 * (j / 3))));
     }
     for (int j = 1; j <= 9; j++)
@@ -77,7 +93,7 @@ bool SudokuBoard::solve_game(int i)
         if (all_found & (1u << j))
         {
             nums.at(i) = j;
-            if (solve_game(i + 1))
+            if (solve(i + 1))
                 // reached the end with this combination; return true
                 return true;
         }
