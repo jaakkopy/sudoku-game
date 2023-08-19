@@ -41,7 +41,7 @@ void draw_grid(const float window_width, const float window_height)
     
 }
 
-void draw_board(const SudokuBoard &board, const float window_width, const float window_height)
+void draw_board(const SudokuBoard &board, float window_width, float window_height)
 {
     draw_grid(window_width, window_height);
     int blocks_horizontal = window_width / 9;
@@ -56,4 +56,9 @@ void draw_board(const SudokuBoard &board, const float window_width, const float 
                 DrawText(TextFormat("%i", num), blocks_horizontal * ((float)c + 0.5), blocks_vertical *((float)r + 0.5) , font_size, BLACK);
         }
     }
+}
+
+void highlight_selected_square(int selected_row, int selected_col, float window_width, float window_height)
+{
+    DrawRectangle(selected_col * window_width / 9, selected_row * window_height / 9, window_width / 9, window_height / 9, GREEN);
 }

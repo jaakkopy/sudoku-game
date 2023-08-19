@@ -1,26 +1,29 @@
 #include <raylib.h>
 #include "SudokuBoard.hpp"
+#include "Player.hpp"
 #include "draw.hpp"
 
-void resize(float &screen_w, float &screen_h);
+void resize(float &window_w, float &screen_h);
 
 int main(void)
 {
-    float screen_w = 700.0f;
-    float screen_h = 800.0f;
+    float window_w = 700.0f;
+    float window_h = 800.0f;
     
     SudokuBoard board;
     board.initialize_board(17);
+    Player player;
 
-    InitWindow(screen_w, screen_h, "sudoku");
+    InitWindow(window_w, window_h, "sudoku");
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
         if (IsWindowResized())
-            resize(screen_w, screen_h);
-
+            resize(window_w, window_h);
+        player.update_selected_position(window_w, window_h);
         BeginDrawing();
-        draw_board(board, screen_w, screen_h);
+        highlight_selected_square(player.get_selected_row(), player.get_selected_col(), window_w, window_h);
+        draw_board(board, window_w, window_h);
         ClearBackground(WHITE);
         EndDrawing();
     }
@@ -28,8 +31,8 @@ int main(void)
     return 0;
 }
 
-void resize(float &screen_w, float &screen_h)
+void resize(float &window_w, float &window_h)
 {
-    screen_w = GetScreenWidth();
-    screen_h = GetScreenHeight();
+    window_w = GetScreenWidth();
+    window_h = GetScreenHeight();
 }
