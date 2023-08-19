@@ -1,6 +1,8 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
+#include <tuple>
+#include <set>
 #include <vector>
 
 class SudokuBoard
@@ -12,7 +14,9 @@ public:
     void set(int r, int c, int num);
     bool solve_game(int i);
     bool verify_solution() const;
+    bool is_clue_square(int r, int c) const;
 private:
+    std::set<std::tuple<int, int>> clue_positions; // unmodifiable squares
     std::vector<int> nums;
 };
 

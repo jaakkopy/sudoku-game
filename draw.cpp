@@ -53,7 +53,13 @@ void draw_board(const SudokuBoard &board, float window_width, float window_heigh
         {
             int num = board.get(r, c);
             if (num != 0)
-                DrawText(TextFormat("%i", num), blocks_horizontal * ((float)c + 0.5), blocks_vertical *((float)r + 0.5) , font_size, BLACK);
+            {
+                Color color = BLACK;
+                if (board.is_clue_square(r, c))
+                    color = GRAY;
+                DrawText(TextFormat("%i", num), blocks_horizontal * ((float)c + 0.5), blocks_vertical *((float)r + 0.5) , font_size, color);
+                
+            }
         }
     }
 }

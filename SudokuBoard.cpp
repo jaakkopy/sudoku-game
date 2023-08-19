@@ -1,5 +1,3 @@
-#include <tuple>
-#include <set>
 #include <time.h>
 #include <random>
 #include <algorithm>
@@ -37,6 +35,11 @@ void SudokuBoard::initialize_board(int clues)
             --remove_amout;
         }
     }
+    for (int i = 0; i < 81; ++i)
+    {
+        if (nums.at(i) != 0)
+            clue_positions.insert(std::tuple<int, int>(i/9, i%9));
+    }
 }
 
 int SudokuBoard::get(int r, int c) const
@@ -46,7 +49,8 @@ int SudokuBoard::get(int r, int c) const
 
 void SudokuBoard::set(int r, int c, int num)
 {
-    this->nums.at(r * 9 + c) = num;
+    if (clue_positions.find(std::tuple<int, int>(r, c)) == clue_positions.end())
+        this->nums.at(r * 9 + c) = num;
 }
 
 bool SudokuBoard::solve_game(int i)
@@ -57,13 +61,13 @@ bool SudokuBoard::solve_game(int i)
         i++;
     if (i == 81)
         return true;
-    int col_first = i % 9;
-    int row_first = i - col_first;
+    int col = i % 9;
+    int row_first = i - col;
     int block_first = ( (i/3) % 3 ) * 3 + (i/27) * 27;
     // check off the numbers found in the row, column, and block
     for (int j = 0; j < 9; ++j)
     {
-        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at(col_first + j * 9)) | (1u << nums.at(block_first + 9 * (j/3))));
+        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at(col + j * 9)) | (1u << nums.at(block_first + 9 * (j/3))));
     }
     for (int j = 1; j <= 9; j++)
     {
@@ -102,4 +106,9 @@ bool SudokuBoard::verify_solution() const
             return false;
     }
     return true;
+}
+
+bool SudokuBoard::is_clue_square(int r, int c) const
+{
+    return clue_positions.find(std::tuple<int, int>(r, c)) != clue_positions.end();
 }

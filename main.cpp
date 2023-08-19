@@ -21,6 +21,9 @@ int main(void)
         if (IsWindowResized())
             resize(window_w, window_h);
         player.update_selected_position(window_w, window_h);
+        int check_number = player.check_number_pressed();
+        if (check_number > 0)
+            board.set(player.get_selected_row(), player.get_selected_col(), check_number);
         BeginDrawing();
         highlight_selected_square(player.get_selected_row(), player.get_selected_col(), window_w, window_h);
         draw_board(board, window_w, window_h);
