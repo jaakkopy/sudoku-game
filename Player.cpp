@@ -30,3 +30,14 @@ int Player::check_number_pressed()
     }
     return 0;
 }
+
+int Player::check_character_pressed()
+{
+    if (IsKeyPressed(KEY_S))
+        return 's';
+    if (IsKeyPressed(KEY_V))
+        return 'v';
+    if (IsKeyPressed(KEY_R))
+        return 'r';
+    return 0;
+}

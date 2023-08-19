@@ -11,6 +11,7 @@ SudokuBoard::SudokuBoard()
 void SudokuBoard::initialize_board(int clues)
 {
     std::fill(nums.begin(), nums.end(), 0);
+    clue_positions.clear();
     // Fill out the first row with randomly ordered numbers from 1 to 9 to randomize the outcome of the solving algorithm
     std::vector<int> first_row = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::random_shuffle(first_row.begin(), first_row.end());
@@ -67,7 +68,8 @@ bool SudokuBoard::solve_game(int i)
     // check off the numbers found in the row, column, and block
     for (int j = 0; j < 9; ++j)
     {
-        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at(col + j * 9)) | (1u << nums.at(block_first + 9 * (j/3))));
+        //                     row                                 column                             block
+        all_found &= ~( (1u << nums.at(row_first + j)) | (1u << nums.at( (i + j * 9) % 81)) | (1u << nums.at(block_first + (j % 3) + 9 * (j/3))));
     }
     for (int j = 1; j <= 9; j++)
     {
@@ -94,6 +96,8 @@ bool SudokuBoard::verify_solution() const
     {
         for (int c = 0; c < 9; ++c)
         {
+            if (nums.at(r * 9 + c) == 0)
+                return false; // the board is not completed yet
             row_checks.at(r) |= (1 << this->get(r, c));
             col_checks.at(c) |= (1 << this->get(r, c));
             block_checks.at((r / 3) * 3 + c / 3) |= (1 << this->get(r, c));
